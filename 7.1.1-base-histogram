@@ -1,4 +1,4 @@
 # Lander Chp 7 Statisical Graphs
-require ggplot2
+require(ggplot2)
 data(diamonds)
 hist(diamonds$carat, main = "Carat Histogram", xlab = "Carat")
