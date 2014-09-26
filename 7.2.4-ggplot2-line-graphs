@@ -23,6 +23,7 @@ g <- g+ scale_color_discrete(name = "Year")
 #  Format the y axis
 g <- g + scale_y_continuous(labels = comma)
 #  Add a title and axix labels
-g <- labs(title = "Population Growth", x = "Month", y = "Population")
+g <- g + labs(title = "Population Growth", x = "Month", y = "Population")
 #  Plot the graph
 g
+#  It works
