@@ -12,4 +12,5 @@ g + geom_point(aes(color = color)) + facet_wrap(~color)
 #  facet grid is simillar, but breaks it down further by additional variables
 #  the plot below shows plots for each color levels by each clarity level
 g + geom_point(aes(color = color)) + facet_grid(cut ~ clarity)
-#
+#   one can also do a histogram with facet wrap which is revealing in itself
+ggplot(diamonds, aes(x = carat)) + geom_histogram(aes(color = color)) + facet_wrap(~color)
