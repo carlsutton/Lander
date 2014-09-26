@@ -1,0 +1,5 @@
+# Lander Chp 7 Statisical Graphs
+require(ggplot2)
+data(diamonds)
+ggplot(data = diamonds) + geom_histogram(aes(x = carat))
+ggplot(data = diamonds) + geom_density(aes(x = carat), fill = "grey50")
