@@ -1,0 +1,10 @@
+#  Lander Chp 11 mapply 
+#  mapply applies a function to each element of multiple LISTS, no loops required
+firstList <- list(A = matrix(1:16, 4), B = matrix(1:16, 2), C = 1:5)
+secondList <- list(A = matrix(1:16, 4), B = matrix(1:16, 8), C = 15:1)
+mapply(identical, firstList, secondList)
+simpleFunc <- function(x,y)
+{
+    NROW(x) + NROW(y)
+}
+mapply(simpleFunc, firstList, secondList)
