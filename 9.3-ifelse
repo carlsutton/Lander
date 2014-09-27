@@ -1,0 +1,6 @@
+#  Lander Chapter ifelse command
+totest <- c(1,1,0,1,0,1)
+ifelse(totest ==1, totest * 3, totest)
+totest[2] <- NA
+ifelse(totest == 1, totest *5, totest)
+
