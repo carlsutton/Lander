@@ -1,21 +1,7 @@
-#  Lander Chp 10 For loops
-for (i in 1:10)
+#  Lander Chp 10 While loops
+x <- 1
+while (x <= 5)
 {
-    print(i)
+    print(x)
+    x <- x+1
 }
-fruit <- c("apple", "banana", "pomegranate")
-fruitlength <- rep(NA, length(fruit))
-fruitlength
-names(fruitlength) <- fruit
-fruitlength
-for (a in fruit)
-{
-    fruitlength[a] <- nchar(a)
-}
-fruitlength
-# use R's vecotiztion which is built in and fast
-#  Do not use loops if they can be avoided
-fruitlength2 <- nchar(fruit)
-names(fruitlength2) <- fruit
-fruitlength2
-
