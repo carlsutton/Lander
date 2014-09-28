@@ -1,4 +1,4 @@
-#  Lander chapter 11 dat.table
+#  Lander chapter 11 data.table
 require(plyr)
 require(ggplot2)
 require(data.table)
