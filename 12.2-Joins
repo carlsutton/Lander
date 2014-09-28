@@ -1,0 +1,18 @@
+#  Lander Chp 12 section 12.2 Joins
+#downloaded files using Windows and not R
+require(stringr)
+#  First git a list of the files
+#  Note that my data is not stored as shown in the book
+theFiles <- dir("data", pattern = ".csv")
+#  Loop through the files
+for (a in theFiles)
+{
+    nameToUse <- str_sub(string = a, start = 12, end = 18)
+#  read in the csv files using read.table
+#  File.path is a convenient way to specify a folder and file name
+    temp <- read.table(file.path("data",a), header = TRUE, sep = ",", stringsAsFactors = FALSE)
+#  assign them to the workspace
+    assign(x = nameToUse, value = temp)
+}
+
+
