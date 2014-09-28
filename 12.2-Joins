@@ -14,5 +14,8 @@ for (a in theFiles)
 #  assign them to the workspace
     assign(x = nameToUse, value = temp)
 }
-
+Aid90s00s <- merge(x = Aid_90s, y = Aid_00s,
+                by.x = c("Country.Name", "Program.Name"),
+                by.y = c("Country.Name", "Program.Name"))
+head(Aid90s00s)
 
