@@ -19,3 +19,8 @@ diamondsDT <- data.table(diamonds)
 setkey(theDT, D)
 setkey(diamondsDT,cut, color)
 diamondsDT[J("Ideal", "E"), ]
+diamondsDT[, mean(price), by = cut]
+diamondsDT[, list(price = mean(price)), by = cut]
+diamondsDT[, mean(price), by = list(cut, color)]
+diamondsDT[, list(price = mean(price), carat = mean(carat)), by = cut]
+diamondsDT[, list(price = mean(price), carat = mean(carat),  caratSum = sum(carat)), by = cut]
