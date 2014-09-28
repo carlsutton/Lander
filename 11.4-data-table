@@ -1,0 +1,25 @@
+#  Lander chapter 11 dat.table
+require(plyr)
+require(ggplot2)
+require(data.table)
+data(diamonds)
+theDF <- data.frame(A = 1:10,
+                   B = letters[1:10],
+                   C = LETTERS[11:20],
+                   D = rep(c("One", "Twp", "Three"),length.out = 10))
+theDT <- data.table(A = 1:10,
+                    B = letters[1:10],
+                    C = LETTERS[11:20],
+                    D = rep(c("One", "Twp", "Three"),length.out = 10))
+theDF
+theDT
+class(theDF$B)
+class(theDT$B)
+diamondsDT <- data.table(diamonds)
+theDT[1:2, ]
+theDT[theDT$A >= 7, ]
+theDT[, list(A, C)]
+theDT[, B]
+theDT[, list(B)]
+theDT[, "B", with = FALSE]
+theDT[, c("A", "C"), with = FALSE]
