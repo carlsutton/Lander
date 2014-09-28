@@ -21,8 +21,16 @@ frameNames <- str_sub(string = theFiles, start = 12, end = 18)
 #build an empty list
 frameList <- vector("list", length(frameNames))
 names(frameList) <- frameNames
+# frameNames
 #   add each data.frame into the list
 for (a in frameNames)
 {
     frameList[[a]] <- eval(parse(text = a))
 }
+# head(frameList[[5]])
+# frameList
+allAid <- Reduce(function(...)
+{
+    join(..., by = c("Country.Name", "Program.Name"))
+}, frameList)
+dim(allAid)
