@@ -1,4 +1,4 @@
-#  Lander chapter 11 data.table
+#  Lander chapter 11 data.table Key
 require(plyr)
 require(ggplot2)
 require(data.table)
@@ -16,10 +16,6 @@ theDT
 class(theDF$B)
 class(theDT$B)
 diamondsDT <- data.table(diamonds)
-theDT[1:2, ]
-theDT[theDT$A >= 7, ]
-theDT[, list(A, C)]
-theDT[, B]
-theDT[, list(B)]
-theDT[, "B", with = FALSE]
-theDT[, c("A", "C"), with = FALSE]
+setkey(theDT, D)
+setkey(diamondsDT,cut, color)
+diamondsDT[J("Ideal", "E"), ]
