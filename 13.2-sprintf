@@ -1,0 +1,7 @@
+#  Lander Chp 13.2 sprintf function
+person <- "Jared"
+partySize <- "eight"
+waitTime <- 25
+require(plyr)
+sprintf("Hello %s, your party of %s will be seated in %s minutes", person, partySize, waitTime)
+sprintf("Hello %s, your party of %s will be seated in %s minutes", c("Jared", "Bob"), c("eight", 16, "four", 10), waitTime)
