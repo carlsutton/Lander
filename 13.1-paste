@@ -1,0 +1,8 @@
+#  Lander Chp 13.1 strings -paste function
+paste("Hello", "Jared", "and others")
+paste(c("Hello", "Hey", "Howdy"), c("Jared", "Bob", "David"))
+paste("Hello", c("Jared", "Bob", "David"))
+paste("Hello", c("Jared", "Bob", "David"), c("Goodbye", "Seeya"))
+vectorOfText <- c("Hello", "Everyone", "out", "there", ".")
+paste(vectorOfText, collapse = " ")
+paste(vectorOfText, collapse = "*")
