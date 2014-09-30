@@ -1,0 +1,69 @@
+#  Lander chp 15 Basic Statistics, section 15.2  Correlation and Covariance
+require(ggplot2)
+head(economics)
+cor(economics$pce, economics$psavert)
+#  to compare multiple variables at once, use cor on a matrix (only for numeric variables)
+cor(economics[, c(2, 4:6)])
+#  going to use ggpairs from the GGally package.  GGally calls reshape which
+#  causes namespace issues with the reshape2 package.  Thus we not load GGally, but call its #  function using the :: operator, which allows access to functions without loading them.
+GGally::ggpairs(economics[, c(2, 4:6)], params = list(labelsize = 8))
+#  now we load the reshape2 package to melt the data
+require(reshape2)
+#  load the scales package for some extra plotting features
+require(scales)
+#  build the correlation matrix
+econCor <- cor(economics[, c( 2, 4:6)])
+econCor
+#  melt it into the long format
+econMelt <- melt(econCor, varnames = c("x", "y"), value.name = "Correlation")
+#  order it according to correlation
+econMelt <- econMelt[order(econMelt$Correlation), ]
+econMelt
+##  plot with ggplot
+#  initialize the plot with x and y on the x and y axes
+a <- ggplot(econMelt, aes(x = x, y = y)) 
+b <- a+ geom_tile(aes(fill = Correlation)) 
+b
+c <- b + scale_fill_gradient2(low = muted("red"), mid = "white", high = "steelblue", guide = guide_colorbar(ticks = FALSE, barheight = 10), limits = c(-1,1))
+c
+d <- c + theme_minimal() + labs(x = NULL, y = NULL)
+m <- c(9, 9, NA, 3,NA, 5, 8, 1, 10, 4)
+n <- c(2, NA, 1, 6, 6, 4, 1, 1,6, 7)
+p <- c(8, 4, 3, 9, 10, NA, 3, NA, 9, 9)
+q <- c(10, 10, 7, 8, 4, 2, 8, 5, 5, 2)
+r <- c(1, 9, 7, 6, 5, 6, 2, 7, 9, 10)
+#  combine them in columns for a matrix
+theMat <- cbind(m, n,p, q,r)
+cor(theMat, use = "everything")
+cor(theMat, use = "all.obs")
+cor(theMat, use = "complete.obs")
+cor(theMat, use = "na.or.complete")
+cor(theMat[c(1, 4, 7, 9, 10), ])
+cor(theMat, use = "pairwise.complete.obs")
+cor(theMat[, c("m", "n")], use = "complete.obs")
+data(tips, package = "reshape2")
+head(tips)
+GGally::ggpairs(tips)
+require(RXKCD)
+getXKCD(which = "552")
+cov(economics$pce, economics$psavert)
+cov(economics[, c(2,4:6)])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
