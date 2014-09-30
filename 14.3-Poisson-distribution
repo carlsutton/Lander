@@ -1,0 +1,19 @@
+#  Lander Chapter 14 section 14.3 Poisson distribution
+require(ggplot2)
+require(reshape2)
+require(stringr)
+pois1 <- rpois(n = 10000, lambda = 1)
+pois2 <- rpois(n = 10000, lambda = 2)
+pois5 <- rpois(n = 10000, lambda = 5)
+pois10 <- rpois(n = 10000, lambda = 10)
+pois20 <- rpois(n = 10000, lambda = 20)
+pois <- data.frame(lambda.1 = pois1, lambda.2 = pois2, lambda.5 = pois5, lambda.10 = pois10, lambda.20 = pois20)
+head(pois)
+#  melt the data into long format
+pois <- melt(data = pois, variable.name = "Lambda", value.name = "x")
+head(pois)
+#  clean up the Lambda to just show the lambda for that value
+pois$Lambda <- as.factor(as.numeric(str_extract(string = pois$Lambda, pattern = "\\d+")))
+head(pois)
+tail(pois)
+ggplot(pois, aes(x = x)) + geom_density(aes(group = Lambda, color = Lambda, fill = Lambda), adjust = 4, alpha = 1/2) + scale_color_discrete() + scale_fill_discrete() + ggtitle("Probality Mass Function")
