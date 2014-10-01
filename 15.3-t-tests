@@ -1,0 +1,56 @@
+#  Lander Chp 15 section 15.3  t tests
+require(plyr)
+require(reshape2)
+require(ggplot2)
+data(tips)
+head(tips)
+unique(tips$sex)
+unique(tips$day)
+#  mu is the "supposed true mean" which we are testing to see if it is true
+t.test(tips$tip, alternative = "two.sided", mu = 2.5)
+#  build a t distribution
+randT <- rt(30000, df = NROW(tips) -1)
+#  get t-statistics and other information
+tipTTest <- t.test(tips$tip, alternative = "two.sided", mu = 2.5)
+#  Plot it
+ggplot(data.frame(x = randT)) + geom_density(aes(x = x), fill = "orange", color = "blue") + geom_vline(xintercept = tipTTest$statistic, color = "red") + geom_vline(xintercept = mean(randT) + c(-2, 2) * sd(randT), linetype = 2)
+#  two sided t test
+#  need to test if variances is not the same both variables, then t test does not apply, but the 
+#  Welsch two sided t test does apply
+#  calculate the variance of tip for both sexes
+aggregate(tip ~ sex,data = tips, var)
+#  use the Shapiro - Wilk normality test
+shapiro.test(tips$tip)
+shapiro.test(tips$tip[tips$sex == "Female"])
+shapiro.test(tips$tip[tips$sex == "Male"])
+#  all the test fail so examine visually
+ggplot(tips, aes(x = tip, fill = sex)) +geom_histogram(binwidth = .5, alpha = 1/2)
+#  The data is obviously not a normal distribution.  Thus the F-test, var.test, or the Barnett test 
+#   will suffice.
+#  We will use the Ansari-Bradley test to examine the equility of variances
+ansari.test(tip ~ sex, tips)
+#  I need to research this test to see what it means
+#  setting var = ture runs a standard two sample t-test wheareas var.qual = false(the default) would #  run the Welch test
+t.test(tip ~ sex, data = tips, var.equal = TRUE)
+#  the following code took awhile to type correctly
+tipSummary <- ddply(tips, "sex", summarize,
+                    tip.mean = mean(tip), tip.sd = sd(tip),
+                    Lower = tip.mean - 2 * tip.sd/sqrt(NROW(tip)),
+                    Upper = tip.mean + 2 * tip.sd/sqrt(NROW(tip)))
+tipSummary
+ggplot(tipSummary, aes(x = tip.mean, y = sex)) + geom_point() +
+    geom_errorbarh(aes(xmin = Lower, xmax = Upper), height = 0.2)
+#  The plot clearly shows the distributions overlapping significantly, so we assume the distributions #  are rough equivalent
+require(UsingR)
+head(father.son)
+t.test(father.son$fheight, father.son$sheight, paired = TRUE)
+heightDiff <- father.son$fheight - father.son$sheight
+head(heightDiff)
+#  this plot code has errors and I sick of trying to find it
+ggplot(father.son, aes(x = fheight - sheight)) +
+    geom_density()) +
+    geom_vline(xintercept = mean(heightDiff) +
+    geom_vline(xintercept = mean(heightDiff) +
+                   2 * c(-1, 1) * sd.(height) / sqrt(NROW(father.son)),
+               linetype = 2)
+
