@@ -1,0 +1,43 @@
+#  Chapter 18 Model Diagnostics 18.1 Residuals
+housing <- read.table("housing.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE)
+#  Give the data good names
+names(housing) <- c("Neighborhood", "Class", "Units", "YearBuilt",
+                    "SqFt", "Income", "IncomePerSqFt", "Expense",
+                    "ExpensePerSqFt", "NetIncome", "Value",
+                    "ValuePerSqFt", "Boro")
+head(housing)
+#  eliminate some outliers
+housing <- housing[housing$Units < 1000, ]
+head(housing)
+#  fit a model
+house1 <-  lm(ValuePerSqFt ~ Units + SqFt + Boro, data = housing)
+summary(house1)
+# visualize the model
+require(coefplot)
+coefplot(house1)
+require(ggplot2)
+#  see what a fortified lm model looks like
+head(fortify(house1))
+#  save a plot to an object
+#  notice we are using th created columns for the x and y axes
+#  they are .fitted and .resid
+h1 <- ggplot(aes(x = .fitted, y = .resid), data = house1) +
+    geom_point() + 
+    geom_hline(yintercept = 0) +
+    geom_smooth(se = FALSE) +
+    labs(x = "Fitted Value", y = "Residuals")
+#  print the plot
+h1
+h1 <- h1 + geom_point(aes(color = Boro))
+h1
+#  Basic plot
+plot(house1, which = 1)
+#  same plot but colored by Boro
+# plot(house1, which = 1, col = as.numeric(factor(house1$mode1$Boro)))
+legend("topright", legend = levels(factor(house1$model$Boro)), pch = 1,
+        col = as.numeric(factor(levels(factor(house1$model1$Boro)))),
+        text.col = as.numeric(factor(levels(factor(house1$model1$Boro)))),
+        title = "Boro")
+plot(house1, which = 2)
+ggplot(house1, aes(sample = .stdresid)) + stat_qq() + geom_abline()
+ggplot(house1, aes(x = .resid)) + geom_histogram()
