@@ -1,0 +1,19 @@
+#  Lander Chp 10 controlling loops
+for (i in 1:10)
+{
+    if (i == 3)
+    {
+#  will skip "3"
+        next
+    }
+    print(i)
+}
+#  break will stop the iternation
+for (i in 1:10)
+{
+    if (i == 4)
+    {
+        break
+    }
+    print(i)
+}
