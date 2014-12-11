@@ -1,0 +1,13 @@
+#  Lander Chp 11 apply function
+# Only works on a matrix, and a matix requires all elements to be of the same type
+theMatrix <- matrix(1:9, nrow = 3)
+#  arguments for apply are 1. the data; 2 margin 1 for row, 2 for column; 3. function to apply
+apply(theMatrix, 2, sum)
+rowSums(theMatrix)
+colSums(theMatrix)
+theMatrix[2, 1] <- NA
+apply(theMatrix, 1, sum)
+apply(theMatrix, 1, sum, na.rm = TRUE)
+rowSums(theMatrix)
+rowSums(theMatrix, na.rm = TRUE)
+
