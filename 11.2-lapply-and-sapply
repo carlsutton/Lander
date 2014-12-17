@@ -1,0 +1,7 @@
+#  Lander Chp 11 Apply family
+#  Lapply works by apply a function to every element of a list and returning a list
+theList <- list(A = matrix(1:9, 3), B = 1:5, c = matrix(1:4, 2), D = 2)
+#  lapply returns a list
+lapply(theList, sum)
+#  sapply returns a vector
+sapply(theList, sum)

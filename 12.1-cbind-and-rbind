@@ -1,0 +1,17 @@
+#  Lander Chapter 12 DataReshaping-Cbind and Rbind
+sport <- c("Hockey", "Baseball", "Football")
+league <- c("NHL", "MLB", "NFL")
+trophy <- c("Stanley Cup", "Commissioner's Trophy", "Vince Lombardi Trophy")
+trophies1 <- cbind(sport, league, trophy)
+class(trophies1)
+head(trophies1)
+#  trophies1 is a matrix
+# Make a data.frame
+trophies2 <- data.frame(sport = c("Basketball", "Golf"),
+                                    league = c("NBA", "PGA"),
+                                    trophy = c("Larry O'Brien Championship Trophy", "Wanamaker Trophy"), stringsAsFactors = FALSE)
+#  Combine them into one data.frame with rbind
+trophies <- rbind(trophies1, trophies2)
+class(trophies)
+head(trophies)
+cbind(Sport = sport, Association = league, Prize = trophy)

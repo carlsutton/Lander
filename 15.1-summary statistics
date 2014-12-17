@@ -1,0 +1,32 @@
+#  Lander chp 15 Basic Statistics
+x <- sample(x = 1:100, size = 100, replace = TRUE)
+x
+mean(x)
+#  copy x
+y <- x
+#  chose a random 20 elements, using sample, to set to NA
+y[sample(x = 1:100, size = 20, replace = FALSE)] <- NA
+y
+mean(y)
+mean(y, na.rm = TRUE)
+grades <- c(95,72,87,66)
+weights <- c(1/2, 1/4, 1/8, 1/8)
+mean(grades)
+weighted.mean(x= grades, w = weights)
+var(x)
+sum((x-mean(x))^2)/(length(x) - 1)
+sqrt(var(x))
+sd(x)
+sd(y)
+sd(y, na.rm = TRUE)
+min(x)
+max(x)
+median(x)
+min(y)
+min(y, na.rm = TRUE)
+summary(x)
+summary(y)
+quantile(x, probs = c(0.25, 0.75))
+quantile(y, probs = c(0.25, 0.75), na.rm = TRUE)
+quantile(x, probs = c(.1, .25, .5, .75, .99))
+

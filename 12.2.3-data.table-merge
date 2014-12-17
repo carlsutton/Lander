@@ -1,0 +1,34 @@
+#  Lander Chp 12 section 12.2.3 data.table merge
+#downloaded files using Windows and not R
+require(stringr)
+#  First get a list of the files
+#  Note that my data is not stored as shown in the book
+theFiles <- dir("data", pattern = ".csv")
+#  Loop through the files
+for (a in theFiles)
+{
+    nameToUse <- str_sub(string = a, start = 12, end = 18)
+#  read in the csv files using read.table
+#  File.path is a convenient way to specify a folder and file name
+    temp <- read.table(file.path("data",a), header = TRUE, sep = ",", stringsAsFactors = FALSE)
+#  assign them to the workspace
+    assign(x = nameToUse, value = temp)
+}
+require(plyr)
+Aid90s00sJoin <- join(x = Aid_90s, y = Aid_00s, by = c("Country.Name", "Program.Name"))
+#  First figure out the names of the data/frames
+frameNames <- str_sub(string = theFiles, start = 12, end = 18)
+#build an empty list
+frameList <- vector("list", length(frameNames))
+names(frameList) <- frameNames
+# frameNames
+#   add each data.frame into the list
+for (a in frameNames)
+{
+    frameList[[a]] <- eval(parse(text = a))
+}
+require(data.table)
+dt90 <- data.table(Aid_90s, key = c("Country.Name", "Program.Name"))
+dt00 <- data.table(Aid_00s, key = c("Country.Name", "Program.Name"))
+#  Note, the join requires specifying the keys for the data.tables.
+dt0090 <- dt90[dt00]

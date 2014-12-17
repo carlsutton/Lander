@@ -1,0 +1,20 @@
+#  Lander Chp 13.3 Extracting text
+require(XML)
+theURL <- "http://www.loc.gov/rr/print/list/057_chron.html"
+load("data/presidents.rdata")
+presidents <- readHTMLTable(theURL, which = 3,as.data.frame = TRUE, skip.rows = 1, header = TRUE, stringsAsFactors = FALSE)
+head(presidents)
+require(stringr)
+yearList <- str_split(string = presidents$YEAR, pattern = "-")
+head(yearList)
+#  combine into one matrix
+yearMatrix <- data.frame(Reduce(rbind, yearList))
+head(yearMatrix)
+#  give columns good names
+names(yearMatrix) <- c("start", "Stop")
+#  bind the new columns into the data.frame
+presidents <- cbind(presidents, yearMatrix)
+#  convert the stat and stop dates into numeric
+presidents$start <- as.numeric(as.character(presidents$start))
+presidents$Stop <- as.numeric(as.character(presidents$Stop))
+head(presidents)

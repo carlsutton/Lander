@@ -1,0 +1,36 @@
+#  Lander Chp 12 section 12.2 Joins
+#downloaded files using Windows and not R
+require(stringr)
+#  First git a list of the files
+#  Note that my data is not stored as shown in the book
+theFiles <- dir("data", pattern = ".csv")
+#  Loop through the files
+for (a in theFiles)
+{
+    nameToUse <- str_sub(string = a, start = 12, end = 18)
+#  read in the csv files using read.table
+#  File.path is a convenient way to specify a folder and file name
+    temp <- read.table(file.path("data",a), header = TRUE, sep = ",", stringsAsFactors = FALSE)
+#  assign them to the workspace
+    assign(x = nameToUse, value = temp)
+}
+require(plyr)
+Aid90s00sJoin <- join(x = Aid_90s, y = Aid_00s, by = c("Country.Name", "Program.Name"))
+#  First figure out the names of the data/frames
+frameNames <- str_sub(string = theFiles, start = 12, end = 18)
+#build an empty list
+frameList <- vector("list", length(frameNames))
+names(frameList) <- frameNames
+# frameNames
+#   add each data.frame into the list
+for (a in frameNames)
+{
+    frameList[[a]] <- eval(parse(text = a))
+}
+# head(frameList[[5]])
+# frameList
+allAid <- Reduce(function(...)
+{
+    join(..., by = c("Country.Name", "Program.Name"))
+}, frameList)
+dim(allAid)

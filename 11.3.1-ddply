@@ -1,0 +1,17 @@
+#  Lander Chp 11 ddply
+require(plyr)
+data(baseball)
+baseball$sf[baseball$year < 1954] <- 0
+baseball$hbp[is.na(baseball$hbp)] <- 0
+any(is.na(baseball$hbp))
+baseball <- baseball[baseball$ab >= 50, ]
+#  the function WITH allows us to specify the columns of a dataframe without having to specify 
+#  the datframe name each time
+baseball$OBP <- with(baseball, (h + bb+hbp)/(ab + bb+hbp + sf))
+obp <- function(data)
+{
+    c(OBP = with(data, sum(h + bb + hbp)/sum(ab + bb + hbp + sf)))
+}
+careerOBP <- ddply(baseball, .variable = "id", .fun =obp)
+careerOBP <- careerOBP[order(careerOBP$OBP, decreasing = TRUE), ]
+head(careerOBP, 10)
