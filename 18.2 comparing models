@@ -1,0 +1,67 @@
+#  Chapter 18 Model Diagnostics 18.3 Cross Validation
+housing <- read.table("housing.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE)
+#  Give the data good names
+names(housing) <- c("Neighborhood", "Class", "Units", "YearBuilt",
+                    "SqFt", "Income", "IncomePerSqFt", "Expense",
+                    "ExpensePerSqFt", "NetIncome", "Value",
+                    "ValuePerSqFt", "Boro")
+#  eliminate some outliers
+housing <- housing[housing$Units < 1000, ]
+head(housing)
+#  fit a model
+house1 <-  lm(ValuePerSqFt ~ Units + SqFt + Boro, data = housing)
+summary(house1)
+# visualize the model
+require(coefplot)
+coefplot(house1)
+require(ggplot2)
+#  see what a fortified lm model looks like
+head(fortify(house1))
+#  save a plot to an object
+#  notice we are using th created columns for the x and y axes
+#  they are .fitted and .resid
+h1 <- ggplot(aes(x = .fitted, y = .resid), data = house1) +
+    geom_point() + 
+    geom_hline(yintercept = 0) +
+    geom_smooth(se = FALSE) +
+    labs(x = "Fitted Value", y = "Residuals")
+#  print the plot
+h1
+h1 + geom_point(aes(color = Boro))
+#  Basic plot
+plot(house1, which = 1)
+#  same plot but colored by Boro
+# plot(house1, which = 1, col = as.numeric(factor(house1$mode1$Boro)))
+legend("topright", legend = levels(factor(house1$model$Boro)), pch = 1,
+        col = as.numeric(factor(levels(factor(house1$model1$Boro)))),
+        text.col = as.numeric(factor(levels(factor(house1$model1$Boro)))),
+        title = "Boro")
+plot(house1, which = 2)
+ggplot(house1, aes(sample = .stdresid)) + stat_qq() + geom_abline()
+ggplot(house1, aes(x = .resid)) + geom_histogram()
+house2 <- lm(ValuePerSqFt ~ Units*SqFt + Boro, data = housing)
+house3 <- lm(ValuePerSqFt ~ Units + SqFt*Boro + Class,
+                data = housing)
+house4 <- lm(ValuePerSqFt ~ Units + SqFt*Boro + SqFt*Class,
+                data = housing)
+house5 <- lm(ValuePerSqFt ~ Boro + Class, data = housing)
+#  multiplot(house1, house2, house3, house4, house5, pointsize = 2)
+anova(house1, house2, house3, house4, house5)
+AIC(house1, house2, house3, house4, house5)
+BIC(house1, house2, house3, house4, house5)
+#  create a binary variable based on whether ValuePerSqFt is above 150
+housing$HighValue <- housing$ValuePerSqFt >= 150
+#  fit a few models
+high1 <- glm(HighValue ~ Units + SqFt + Boro, 
+            data = housing, family = binomial(link = "logit"))
+high2 <- glm(HighValue ~ Units*SqFt + Boro,
+            data = housing, family = binomial(link = "logit"))
+high3 <- glm(HighValue ~ Units + SqFt*Boro + Class,
+            data = housing, family = binomial(link = "logit"))
+high4 <- glm(HighValue ~ Units + SqFt*Boro + SqFt*Class,
+            data = housing, family = binomial(link = "logit"))
+high5 <- glm(HighValue ~ Boro + Class,
+            data = housing, family = binomial(link = "logit"))
+anova(high1, high2, high3, high4, high5)
+AIC(high1, high2, high3, high4, high5)
+BIC(high1, high2, high3, high4, high5)

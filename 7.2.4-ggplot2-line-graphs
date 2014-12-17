@@ -1,0 +1,29 @@
+# Lander Chp 7 Statisical Graphs
+# load the lubridate package from Hadley Wickham
+require(lubridate)
+require(ggplot2)
+# create year and month variables
+economics$year <- year(economics$date)
+# the label arguments to month means that the result should be the
+#  names of the months instead of the number
+economics$month <- month(economics$date, label = TRUE)
+#  subset the data
+#  The "which" function returns the indices of observations where the
+#  tested condition was TRUE
+econ2000 <- economics[which(economics$year >= 2000), ]
+#  Load the scales package for better axes formatting
+require(scales)
+#  Build the foundation of the plot
+g <- ggplot(econ2000, aes(x = month, y = pop))
+#  add lines color coded and grouped by year
+#  The group aesthetic breaks the data into separate groups
+g <- g +geom_line(aes(color = factor(year), group = year))
+#  Name the legend "Year"
+g <- g+ scale_color_discrete(name = "Year")
+#  Format the y axis
+g <- g + scale_y_continuous(labels = comma)
+#  Add a title and axix labels
+g <- g + labs(title = "Population Growth", x = "Month", y = "Population")
+#  Plot the graph
+g
+#  It works

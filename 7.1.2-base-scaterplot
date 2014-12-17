@@ -1,0 +1,5 @@
+# Lander Chp 7 Statisical Graphs
+require(ggplot2)
+data(diamonds)
+plot(price ~ carat, data = diamonds)
+plot(diamonds$carat, diamonds$price)

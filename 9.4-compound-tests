@@ -1,0 +1,8 @@
+#  Lander Chp 9 Compound Tests
+a <- c(1,1,0,1)
+b <- c(2,1,0,1)
+#  Single form checks both sides
+ifelse(a == 1 & b == 1, "Yes", "No")
+#  double form checks one side first, and if it fails, stops testing, if left side is true, then checks right side
+
+ifelse(a == 1 && b == 1, "Yes", "No")

@@ -1,0 +1,17 @@
+# Chapter 9 Control Statements
+check.bool <- function(x)
+{
+    if (x == 1)
+    {
+        print("Hello")
+    } else if (x == 0)
+    {   
+        print("Goodbye")
+    } else
+    {
+        print("Confused")
+    }
+}
+check.bool(1)
+check.bool(0)
+check.bool("K")

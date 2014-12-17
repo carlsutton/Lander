@@ -1,0 +1,134 @@
+#  Lander Chapter 19 
+require(useful)
+require(glmnet)
+require(parallel)
+require(doParallel)
+require(plyr)
+require(stringr)
+require(reshape2)
+acs <-read.table(file ="acs_ny.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE)
+#  build a data.frame where the first three columns are numeric, the next two factors
+testFrame <- data.frame(First = sample(1:10, 20, replace = TRUE),
+                        Second = sample(1:20, 20, replace = TRUE),
+                        Third = sample(1:10, 20, replace = TRUE),
+                        Fourth = factor(rep(c("Alice", "Bob", "Charlie", "David"), 5)),
+                        Fifth = ordered(rep(c("Edward", "Frank", "Georgia", "Hank", "Issac"), 4)),
+                        Sixth = rep(c("a", "b"), 10), stringsAsFactors = F)
+mod.mat <- model.matrix(First ~ Second + Fourth + Fifth, testFrame)
+#  always use all levels
+test.a <- build.x(First ~ Second + Fourth +Fifth, testFrame)
+#  just use all levels for Fourth
+test <- build.x(First ~ Second + Fourth + Fifth, testFrame, 
+        contrasts = c(Fourth = FALSE, Fifth = TRUE))
+#  make a binary incoime variable for building a logistic regression
+acs$Income <- with(acs, FamilyIncome >= 150000)
+#  build predictor matrix
+acsX <- build.x(Income ~ NumBedrooms + NumChildren + NumPeople + NumRooms +NumUnits +
+                NumVehicles + NumWorkers + OwnRent + YearBuilt + ElectricBill + FoodStamp +
+                HeatingFuel + Insurance + Language -1, data = acs, contrasts = FALSE)
+class(acsX)
+dim(acsX)
+acsY <- build.y(Income ~ NumBedrooms + NumChildren + NumPeople + NumRooms +NumUnits +
+                NumVehicles + NumWorkers + OwnRent + YearBuilt + ElectricBill + FoodStamp +
+                HeatingFuel + Insurance + Language -1, data = acs)
+class(acsY)
+dim(acsY)
+set.seed(1863561)
+#  run the cross-validation glmnet
+acsCV1 <- cv.glmnet(x = acsX, y = acsY, family = "binomial", nfold = 5)
+acsCV1$lambda.min
+acsCV1$lambda.1se
+plot(acsCV1)
+coef(acsCV1, s = "lambda.1se")
+#  plot the path
+plot(acsCV1$glmnet.fit, xvar = "lambda")
+#  add vertical lines for optimal values of lambda
+abline(v = log(c(acsCV1$lambda.min,  acsCV1$lambda.1se)), lty = 2)
+#  fit the Ridge model
+set.seed(71623)
+acsCV2 <- cv.glmnet(x = acsX, y = acsY, family = "binomial", nfold = 5, alpha = 0)
+#  Look at the lambda values
+acsCV2$lambda.min
+acsCV2$lambda.1se
+#  look at the coefficients
+coef(acsCV2, s = "lambda.1se")
+#  plot the cross-validation error path
+plot(acsCV2)
+#  plot the coefficient path
+plot(acsCV2$glmnet.fit, xvar = "lambda")
+abline(v = log(c(acsCV2$lambda.min, acsCV2$lambda.1se)), lty = 2)
+#  set the seed for repeatability for random results
+set.seed(2834673)
+#  create folds, we want observations to be in the same fold each time it is run
+theFolds <- sample(rep(x = 1:5, length.out = nrow(acsX)))
+#  make sequence of alpha values
+alphas <- seq(from = 0.5, to = 1.0, by = 0.05)
+set.seed(5127151)
+#  start a cluster with two workers
+c1 <- makeCluster(2)
+#  register the workers
+registerDoParallel(c1)
+#  keep track of timing
+#  Windows does not recognize Sys.Time()
+#  build foreach loop to run in parallel
+acsDouble <- foreach(i = 1:length(alphas), .errorhandling = "remove", .inorder = FALSE,
+                    .multicombine = TRUE, .packages = "glmnet") %dopar%
+{
+    print(alphas[i])
+    cv.glmnet(x = acsX, y = acsY, family = "binomial", nfolds = 5, foldid = theFolds, 
+                alpha = alphas[i])
+}
+#  Windows does not recognize Sys.Time()
+#  make sure to stop the cluster when done
+stopCluster(c1)
+#  time difference not computed due to Windows limitation
+sapply(acsDouble, class)
+#  function for extracting info from glmnet object
+extractGlmnetInfo <- function(object)
+{
+    #  find lambda's
+    lambdaMin <- object$lambda.min
+    lambda1se <- object$lambda.1se
+    # figure out where lambda's fall in the path
+     whichMin <- which(object$lambda == lambdaMin)
+     which1se <- which(object$lambda == lambda1se)
+    #  build a one line data.frame with each of the selected lambda's
+    #  and its corresponding error values
+      data.frame(lambda.min = lambdaMin, error.min = object$cvm[whichMin],
+               lambda.1se = lambda1se, error.1se = object$cvm[which1se])
+}
+#  apply that function to each element of the list
+#  combine it all into a data.frame
+alphaInfo <- Reduce(rbind, lapply(acsDouble, extractGlmnetInfo))
+#  could also be do with ldply from pylr
+alphaInfo2 <- plyr::ldply(acsDouble, extractGlmnetInfo)
+identical (alphaInfo, alphaInfo2)
+alphaInfo$Alpha <- alphas
+alphaInfo
+alphaMelt <- melt(alphaInfo, id.vars = "Alpha", value.name = "Value",
+                    variable.name = "Measure")
+alphaMelt$Type <- str_extract(string = alphaMelt$Measure,
+                        pattern = "(min|1se)")
+#  some housekeeping
+alphaMelt$Measure <- str_replace(string = alphaMelt$Measure, 
+                    pattern = "\\.(min|1se)", replacement = "")
+alphaCast <- dcast(alphaMelt, Alpha + Type ~ Measure,
+                value.var = "Value")
+ggplot(alphaCast, aes(x = Alpha, y = error)) +
+    geom_line(aes(group = Type)) +
+    facet_wrap(~Type, scales = "free_y", ncol = 1) +
+    geom_point(aes(size = lambda))
+set.seed(5127151)
+acsCV3 <- cv.glmnet(x = acsX, y = acsY, family = "binomial", nfold = 5,
+            alpha = alphaInfo$Alpha[which.min(alphaInfo$error.1se)])
+plot(acsCV3)
+plot(acsCV3$glmnet.fit, xvar = "lambda")
+abline(v = log(c(acsCV3$lambda.min, acsCV3$lambda.1se)), lty = 2)
+theCoef <- as.matrix(coef(acsCV3, s = "lambda.1se"))
+coefDF <- data.frame(Value = theCoef, 
+            Coefficient = rownames(theCoef))
+coefDF <- coefDF[nonzeroCoef(coef(acsCV3, s = "lambda.1se")), ]
+ggplot(coefDF, aes(x = X1, y = reorder(Coefficient, X1))) + 
+        geom_vline(xintercept = 0, color = "grey", linetype = 2) +
+        geom_point(color = "blue") + labs(x = "Value",
+        y = "Coefficient", title = "Coefficient Plot")

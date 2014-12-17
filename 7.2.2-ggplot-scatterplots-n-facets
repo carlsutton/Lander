@@ -1,0 +1,16 @@
+# Lander Chp 7 Statisical Graphs
+require(ggplot2)
+data(diamonds)
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point()
+# sae basics off ggplot object to a variable
+g <- ggplot(diamonds, aes( x = carat, y = price))
+#  plot carat versus the color of the diamonds
+#  by placing the color inside aes, the data determines the color and creates a legend
+g + geom_point(aes(color = color))
+#  facet wrap sorts the data, in this case by color, and plots them separately
+g + geom_point(aes(color = color)) + facet_wrap(~color)
+#  facet grid is simillar, but breaks it down further by additional variables
+#  the plot below shows plots for each color levels by each clarity level
+g + geom_point(aes(color = color)) + facet_grid(cut ~ clarity)
+#   one can also do a histogram with facet wrap which is revealing in itself
+ggplot(diamonds, aes(x = carat)) + geom_histogram(aes(color = color)) + facet_wrap(~color)

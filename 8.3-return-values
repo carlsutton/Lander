@@ -1,0 +1,13 @@
+# Lasnder chpt 8 function return values
+#  not explicit return
+double.num <- function(x)
+{
+    x * 2
+}
+double.num(5)
+# Explict return value
+double.num <- function(x)
+{
+    return(x * 2)
+}
+double.num(5)

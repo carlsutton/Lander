@@ -1,0 +1,12 @@
+# Lander Chp 7 Statisical Graphs
+# load the lubridate package from Hadley Wickham
+require(lubridate)
+require(ggplot2)
+require(ggthemes)
+#  Build a plot and store it in q2
+g2 <- ggplot(diamonds, aes(x = carat, y = price))+ geom_point(aes(color = color))
+#  Apply a few themes
+g2 + theme_economist() + scale_colour_economist()
+g2 + theme_excel() + scale_colour_excel()
+g2 + theme_tufte()
+g2 + theme_wsj()

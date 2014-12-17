@@ -1,0 +1,36 @@
+#  Lander Chapter 16
+require(UsingR)
+require(ggplot2)
+data(father.son)
+head(father.son)
+ggplot(father.son, aes(x = fheight, y = sheight)) + geom_point() + geom_smooth(method = "lm") + labs(x = "Fathers", y = "Sons")
+heightsLM <-lm(sheight ~ fheight, data = father.son)
+heightsLM
+summary(heightsLM)
+#  16.1.1 ANOVA Alternative
+data(tips,package = "reshape2")
+head(tips)
+tipsAnova <- aov(tip ~ day - 1, data = tips)
+summary(tipsAnova)
+tipsLM <- lm(tip ~ day -1, data = tips)
+summary(tipsLM)
+require(plyr)
+tipsByDay <- ddply(tips, "day", summarize,
+                   tip.mean = mean(tip), tip.sd = sd(tip),
+                   length = NROW(tip),
+                   tfrac = qt(p = 0.90, df = length -1),
+                   Lower = tip.mean - tfrac*tip.sd/sqrt(length),
+                   Upper = tip.mean + tfrac*tip.sd/sqrt(length))
+tipsInfo <- summary(tipsLM)
+tipsCoef <- as.data.frame(tipsInfo$coefficient[, 1:2])
+tipsCoef <- within(tipsCoef, {
+    Lower <- Estimate - qt(p = 0.90, df = tipsInfo$df[2]) * `Std. Error`
+    Upper <- Estimate + qt(p = 0.90, df = tipsInfo$df[2]) * `Std. Error`
+    day <- rownames(tipsCoef)
+})
+ggplot(tipsByDay, aes(x = tip.mean, y = day)) + geom_point() +
+    geom_errorbarh(aes(xmin = Lower, xmax = Upper), height = 0.3) +
+    ggtitle("Tps by day calculated manually")
+ggplot(tipsCoef, aes(x = Estimate, y = day)) +geom_point() +
+    geom_errorbarh(aes(xmin = Lower, xmax = Upper), height = 0.3) +
+    ggtitle("Tips by day calculated from regression model")

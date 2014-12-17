@@ -1,0 +1,21 @@
+# Landeer chapter on functions
+#  One substitution
+sprintf("Hello %s", "Jared")
+#  Two substitutions
+sprintf("Hello %s, today is %s", "Jared", "Sunday")
+hello.person <- function(name)
+{
+    print(sprintf("Hello %s", name))
+}
+
+hello.person("Jared")
+hello.person <- function(first, last)
+{
+    print(sprintf("Hello %s %s", first, last))
+}
+hello.person(first = "Jared", last = "Lander")
+hello.person(last = "Lander", first = "Jared")
+hello.person("Jared", last = "Lander")
+hello.person(first = "Jared", "Lander")
+hello.person("Jared", "Lander")
+

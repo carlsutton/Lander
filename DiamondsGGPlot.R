@@ -25,3 +25,4 @@ ggplot(diamonds, aes(y = carat, x = cut)) + geom_boxplot()
 ggplot(diamonds, aes(y = carat, x = cut)) + geom_violin()
 ggplot(diamonds, aes(y = carat, x = cut)) + geom_point() + geom_violin()
 ggplot(diamonds, aes(y = carat, x = cut)) + geom_violin() + geom_point()
+#
